@@ -11,7 +11,7 @@ public class Proveedor extends AbstractEntity {
     private String nombre;
     private String direccion;
     private String telefono;
-    private String productosSuministrados;
+    private String productos;
     
 	public String getIdentificacion() {
 		return identificacion;
@@ -37,11 +37,11 @@ public class Proveedor extends AbstractEntity {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	public String getProductosSuministrados() {
-		return productosSuministrados;
+	public String getProductos() {
+		return productos;
 	}
-	public void setProductosSuministrados(String productosSuministrados) {
-		this.productosSuministrados = productosSuministrados;
+	public void setProductos(String productos) {
+		this.productos = productos;
 	}
     
 }

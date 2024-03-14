@@ -89,14 +89,14 @@ public class GestionInventarioSupermercadoTest {
 			WebElement campoNombre = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_nombre']/input"));
 			WebElement campoDireccion = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_direccion']/input"));
 			WebElement campoTelefono = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_telefono']/input"));
-			WebElement campoProductosSuministrados = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_productosSuministrados']/input"));
+			WebElement campoProductos = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_productos']/input"));
 			
 			// Ingresa el nombre de usuario
 			campoIdentificacion.sendKeys("1010");
 			campoNombre.sendKeys("OLECSA");
 			campoDireccion.sendKeys("Tegucigalpa, Honduras, Calle los Alcaldes");
 			campoTelefono.sendKeys("22801045");
-			campoProductosSuministrados.sendKeys("Arroz Blanco 454 Gr");
+			campoProductos.sendKeys("Arroz Blanco 454 Gr");
 	        
 			Thread.sleep(3000);
 			

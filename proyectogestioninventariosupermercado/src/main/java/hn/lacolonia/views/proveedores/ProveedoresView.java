@@ -18,7 +18,6 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.LitRenderer;
@@ -42,12 +41,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Proveedores")
-@Route(value = "proveedores/:nombre?/:action?(edit)", layout = MainLayout.class)
+@Route(value = "proveedores/:identificacion?/:action?(edit)", layout = MainLayout.class)
 //@RouteAlias(value = "", layout = MainLayout.class)
 //@Uses(Icon.class)
 public class ProveedoresView extends Div implements BeforeEnterObserver, ViewModelProveedores {
 
-    private final String SUPPLIER_ID = "nombre";
+    private final String SUPPLIER_IDENTIFICACION = "identificacion";
     private final String SUPPLIER_EDIT_ROUTE_TEMPLATE = "proveedores/%s/edit";
 
     private final Grid<Proveedor> grid = new Grid<>(Proveedor.class, false);
@@ -56,7 +55,7 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
     private TextField nombre;
     private TextField direccion;
     private TextField telefono;
-    private TextField productosSuministrados;
+    private TextField productos;
 
     private final Button cancel = new Button("Cancelar", new Icon(VaadinIcon.CLOSE_CIRCLE));
     private final Button save = new Button("Guardar", new Icon(VaadinIcon.CHECK_CIRCLE));
@@ -64,14 +63,14 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
     private final Button consultar = new Button("Consultar", new Icon(VaadinIcon.SEARCH));
 
     private Proveedor proveedorSeleccionado;
-    private List<Proveedor> elements;
-    private InteractorProveedores contro;
+    private List<Proveedor> elementos;
+    private InteractorProveedores controlador;
 
     public ProveedoresView() {
         addClassNames("proveedores-view");
 
-        contro = new InteractorImplProveedores(this);
-        elements = new ArrayList<>();
+        controlador = new InteractorImplProveedores(this);
+        elementos = new ArrayList<>();
         
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
@@ -86,21 +85,21 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
         grid.addColumn("nombre").setAutoWidth(true);
         grid.addColumn("direccion").setAutoWidth(true);
         grid.addColumn("telefono").setAutoWidth(true);
-        grid.addColumn("productosSuministrados").setAutoWidth(true);;
+        grid.addColumn("productos").setAutoWidth(true);
         
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(SUPPLIER_EDIT_ROUTE_TEMPLATE, event.getValue().getNombre()));
+                UI.getCurrent().navigate(String.format(SUPPLIER_EDIT_ROUTE_TEMPLATE, event.getValue().getIdentificacion()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(ProveedoresView.class);
             }
         });
         
-        contro.consultarProveedores();
+        controlador.consultarProveedores();
 
         cancel.addClickListener(e -> {
             clearForm();
@@ -140,14 +139,14 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<String> nombreProveedor = event.getRouteParameters().get(SUPPLIER_ID);
-        if (nombreProveedor.isPresent()) {
-            Proveedor proveedorObtenido = obtenerProveedor(nombreProveedor.get());
+        Optional<String> identificacionProveedor = event.getRouteParameters().get(SUPPLIER_IDENTIFICACION);
+        if (identificacionProveedor.isPresent()) {
+            Proveedor proveedorObtenido = obtenerProveedor(identificacionProveedor.get());
             if (proveedorObtenido != null) {
                 populateForm(proveedorObtenido);
             } else {
                 Notification.show(
-                        String.format("El proveedor con identificacion = %s no existe", nombreProveedor.get()), 3000,
+                        String.format("El proveedor con identificacion = %s no existe", identificacionProveedor.get()), 3000,
                         Notification.Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid
@@ -157,10 +156,10 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
         }
     }
 
-    private Proveedor obtenerProveedor(String nombre) {
+    private Proveedor obtenerProveedor(String identificacion) {
 		Proveedor provencontrado = null;
-		for(Proveedor prov: elements) {
-			if(prov.getNombre().equals(nombre)) {
+		for(Proveedor prov: elementos) {
+			if(prov.getIdentificacion().equals(identificacion)) {
 				provencontrado = prov;
 				break;
 			}
@@ -193,13 +192,13 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
         telefono = new TextField("Telefono");
         telefono.setId("txt_telefono");
         telefono.setPrefixComponent(VaadinIcon.PHONE.create());
-
-        productosSuministrados = new TextField("Productos Suministrados");
-        productosSuministrados.setId("txt_productosSuministrados");
-        productosSuministrados.setPrefixComponent(VaadinIcon.CART.create());
+        
+        productos = new TextField("Productos Suministrados");
+        productos.setId("txt_productos");
+        productos.setPrefixComponent(VaadinIcon.CART.create());
         
         // METODO ADD
-        formLayout.add(identificacion, nombre, direccion, telefono, productosSuministrados);
+        formLayout.add(identificacion, nombre, direccion, telefono, productos);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -246,13 +245,13 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
             nombre.setValue(value.getNombre());
             direccion.setValue(value.getDireccion());
             telefono.setValue(value.getTelefono());
-            productosSuministrados.setValue(value.getProductosSuministrados());
+            productos.setValue(value.getProductos());
         }else {
         	identificacion.setValue("");
             nombre.setValue("");
             direccion.setValue("");
             telefono.setValue("");
-            productosSuministrados.setValue("");
+            productos.setValue("");
         }
     }
 
@@ -260,7 +259,7 @@ public class ProveedoresView extends Div implements BeforeEnterObserver, ViewMod
 	public void mostrarProveedoresEnGrid(List<Proveedor> items) {
 		Collection<Proveedor> itemsCollection = items;
 		grid.setItems(itemsCollection);
-		this.elements = items;
+		this.elementos = items;
 	}
 
 	@Override
