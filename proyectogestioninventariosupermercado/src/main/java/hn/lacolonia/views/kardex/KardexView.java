@@ -1,8 +1,5 @@
 package hn.lacolonia.views.kardex;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -23,25 +20,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 
-import hn.lacolonia.controller.InteractorProductos;
-import hn.lacolonia.data.Kardex;
-//import hn.lacolonia.data.Producto;
 import hn.lacolonia.views.MainLayout;
-import hn.lacolonia.views.productos.ProductosView;
-import hn.lacolonia.views.productos.ViewModelProductos;
 
 @PageTitle("Kardex")
 @Route(value = "kardex", layout = MainLayout.class)
 @Uses(Icon.class)
-public class KardexView extends /*Div implements*/ Composite<VerticalLayout> /*BeforeEnterObserver, ViewModelProductos*/ {
-	private final String KARDEX_IDENTIFICACION = "identificacion";
-    private final String KARDEX_EDIT_ROUTE_TEMPLATE = "kardex/%s/edit";
+public class KardexView extends Composite<VerticalLayout> {
     
     public KardexView() {
         VerticalLayout layoutColumn2 = new VerticalLayout();
@@ -67,10 +56,6 @@ public class KardexView extends /*Div implements*/ Composite<VerticalLayout> /*B
         h3.setText("Kardex");
         h3.setWidth("100%");
         formLayout2Col.setWidth("100%");
-        
-        /*private Kardex kardexSeleccionado;
-        private List<Kardex> elementos;
-        private InteractorKardex controlador;*/
         
         identificacion.setLabel("Identificacion");
         identificacion.setId("txt_identificacion");
@@ -135,35 +120,4 @@ public class KardexView extends /*Div implements*/ Composite<VerticalLayout> /*B
         layoutRow.add(cancelar);
         layoutRow.add(consultar);
     }
-
-	/*@Override
-	public void beforeEnter(BeforeEnterEvent event) {
-		Optional<String> identificacionKardex = event.getRouteParameters().get(KARDEX_IDENTIFICACION);
-        if (identificacionKardex.isPresent()) {
-            Kardex kardexObtenido = obtenerKardex(identificacionKardex.get());
-            if (kardexObtenido != null) {
-                populateForm(kardexObtenido);
-            } else {
-                Notification.show(
-                        String.format("El Kardex con identificacion = %s no existe", identificacionKardex.get()), 3000,
-                        Notification.Position.BOTTOM_START);
-                // when a row is selected but the data is no longer available,
-                // refresh grid
-                //refreshGrid();
-                event.forwardTo(ProductosView.class);
-            }
-        }
-    }
-
-	@Override
-	public void mostrarProductosEnGrid(List<Producto> items) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mostrarMensajeError(String mensaje) {
-		// TODO Auto-generated method stub
-		
-	}*/
 }
